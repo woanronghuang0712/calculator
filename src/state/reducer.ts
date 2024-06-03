@@ -5,6 +5,10 @@ import { initialState } from './initialState.ts';
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    
+    // Append a new value (digit or operator) to the display. 
+    // First checks if the calculator is in its initial state and starts a new number. 
+    // Prevents invalid input such as multiple operators or decimal points in a row by checking the last character in the display.
     case 'APPEND':
       if (state.isInitial) {
         return { ...state, display: action.value, isInitial: false };
@@ -15,12 +19,19 @@ const reducer = (state: State, action: Action): State => {
       }
       return { ...state, display: state.display + action.value };
     
+    // Delete the last character from the display.
+    // If the display becomes empty to reset the initial state.
     case 'DELETE':
       return { ...state, display: removeLastCharacter(state.display), isInitial: removeLastCharacter(state.display) === '0' };
     
+    // Clear the display and resetting the state to its initial values.
     case 'CLEAR':
       return initialState;
     
+    // Checks if an operator and previous value are set, 
+    // Parses the current display value, and performs the calculation. 
+    // If there's an error (e.g., division by zero), it sets the display to 'Error'. 
+    // Otherwise, it updates the display with the result and resets the operator and previous value.
     case 'CALCULATE':
       if (!state.operator || state.previousValue === null) {
         return state;
@@ -32,6 +43,9 @@ const reducer = (state: State, action: Action): State => {
       }
       return { display: result.toString(), isInitial: true, operator: null, previousValue: null };
     
+    // Sets the operator for the next calculation. 
+    // Handles intermediate calculations if an operator and previous value are already set. 
+    // If in the initial state with a previous value, it simply sets the new operator.
     case 'SET_OPERATOR':
       if (state.isInitial && state.previousValue !== null) {
         return { ...state, operator: action.operator };

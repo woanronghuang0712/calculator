@@ -1,6 +1,12 @@
 import { Operator } from '../state/types';
 
-// Calculate the result based on the operator and operands
+ // Calculates the result based on the operator and operands.
+ // It handles the following cases:
+ // - Division by zero, returning 'Error'.
+ // - Ensuring the result fits within a specified maximum display length (15 characters).
+ // - Converting large numbers to exponential notation if they exceed the display length.
+ // - Trimming unnecessary trailing zeros from decimal results.
+ // - Handling unknown operators, returning 'Error'.
 export const calculate = (leftOperand: number, rightOperand: number, operator: Operator): number | string => {
   const maxDisplayLength = 15;
   let result: number;
